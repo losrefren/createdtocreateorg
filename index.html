@@ -31,7 +31,7 @@
 
   /* ---------- one shared fixed background; --p (0..1) morphs it on scroll ---------- */
   .page { position: relative; }
-  .bg { position: fixed; inset: 0; overflow: hidden; z-index: 0; --p: 0; --q: 0; --u: 0; }
+  .bg { position: fixed; inset: 0; overflow: hidden; z-index: 0; --p: 0; --q: 0; --u: 0; --v: 0; opacity: calc(1 - var(--v)); }
   .pos { position: absolute; will-change: transform, opacity; }
   .shape { position: absolute; inset: 0; filter: blur(26px); will-change: transform; }
 
@@ -185,8 +185,8 @@
   .p4 .head { width: min(77vw, 1180px); }
   .h3.h4 { text-align: left; font-weight: 700; margin: 0 0 9vh; }
   .p4 .copy { margin-top: 10vh; }
-  .board4 { position: relative; container-type: inline-size; width: min(77vw, 1180px); display: grid; grid-template-columns: repeat(4, 1fr); }
-  .tk { --n: 2.55cqw; aspect-ratio: 443 / 217; display: grid; place-items: center; text-align: center; background: var(--tb); color: var(--tf);
+  .board4 { position: relative; container-type: inline-size; width: min(77vw, 1180px); display: grid; grid-template-columns: repeat(4, 1fr); align-items: start; }
+  .tk { --n: 2.55cqw; aspect-ratio: 443 / 217; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 2cqw; overflow: hidden; text-align: center; background: var(--tb); color: var(--tf);
     font-weight: 700; font-size: 3.5cqw; letter-spacing: -0.02em; line-height: 1; user-select: none;
     -webkit-mask:
       radial-gradient(circle at 0 0, transparent var(--n), #000 calc(var(--n) + 1px)) top left / 51% 51% no-repeat,
@@ -198,7 +198,7 @@
       radial-gradient(circle at 100% 0, transparent var(--n), #000 calc(var(--n) + 1px)) top right / 51% 51% no-repeat,
       radial-gradient(circle at 0 100%, transparent var(--n), #000 calc(var(--n) + 1px)) bottom left / 51% 51% no-repeat,
       radial-gradient(circle at 100% 100%, transparent var(--n), #000 calc(var(--n) + 1px)) bottom right / 51% 51% no-repeat; }
-  .star3b { left: 87.5%; top: 15.7%; width: 18%; }
+  .star3b { left: 87.5%; top: 3.85cqw; width: 18%; }
   .star3 { transition: scale .25s ease; }
   .star3.hov { scale: 1.06; }
   .star3.dragging { scale: 1.08; will-change: translate; }
@@ -206,6 +206,46 @@
   .tk { cursor: grab; touch-action: none; transition: scale .25s ease, rotate .25s ease; }
   .tk:hover { scale: 1.04; rotate: 1.5deg; }
   .tk.dragging { scale: 1.06; cursor: grabbing; will-change: translate; }
+
+  /* ---------- page 4: tickets grow downward and push the ones below them ---------- */
+  .col { display: flex; flex-direction: column; min-width: 0; }
+  .gap { aspect-ratio: 443 / 217; }
+  .tk { transition: scale .25s ease, rotate .25s ease, padding .5s ease; }
+  .tk.is-open { padding-top: 2.2cqw; padding-bottom: 2.2cqw; }
+  .tk:focus-visible { outline: 3px solid #000; outline-offset: 3px; }
+  .tk .tt { display: block; }
+  .tk .td { margin: 0; max-height: 0; opacity: 0; overflow: hidden; font-size: clamp(13px, 1.7cqw, 20px); font-weight: 500; line-height: 1.35; letter-spacing: -0.005em;
+    transition: max-height .55s ease, opacity .3s ease .12s, margin .55s ease; }
+  .tk.is-open .td { max-height: 12em; opacity: 1; margin-top: 1.1cqw; }
+  .tk.measure, .tk.measure .td { transition: none; }
+  @media (prefers-reduced-motion: reduce) { .tk .td { transition: none; } }
+
+  /* ---------- ring page ---------- */
+  .p5 { --S: min(66vw, 100vh); --D: calc(var(--S) * 0.74); position: relative; z-index: 1; min-height: 100vh; display: grid; place-items: center; padding: 8vh 4vw; }
+  .orb { position: absolute; left: 50%; top: 50%; width: var(--S); aspect-ratio: 1; translate: -50% -50%; pointer-events: none; }
+  .orb-mask { position: absolute; inset: 0; }
+  .haze { -webkit-mask-image: linear-gradient(transparent, transparent); mask-image: linear-gradient(transparent, transparent); }
+  .haze .orb-spin i { filter: blur(24px); }
+  .orb-spin { position: absolute; inset: 0; will-change: transform; }
+  .orb-spin i { position: absolute; display: block; border-radius: 50%; }
+  .orb-spin .ring { inset: 0; filter: blur(6px);
+    background: conic-gradient(rgba(232, 150, 186, .7), rgba(238, 188, 210, .32) 25%, rgba(232, 150, 186, .62) 52%, rgba(240, 192, 214, .3) 78%, rgba(232, 150, 186, .7));
+    -webkit-mask-image: radial-gradient(circle closest-side, transparent 48%, rgba(0, 0, 0, .55) 62%, #000 72%, rgba(0, 0, 0, .45) 85%, transparent 100%);
+    mask-image: radial-gradient(circle closest-side, transparent 48%, rgba(0, 0, 0, .55) 62%, #000 72%, rgba(0, 0, 0, .45) 85%, transparent 100%); }
+  .orb-spin .b1 { left: 19.5%; top: 31.1%; width: 30%; height: 30%; filter: blur(10px);
+    background: radial-gradient(circle, rgba(244, 205, 222, .55) 0%, rgba(222, 120, 165, .85) 42%, rgba(222, 120, 165, .45) 66%, rgba(222, 120, 165, 0) 100%); }
+  .orb-spin .b2 { left: 31.7%; top: 48.7%; width: 36%; height: 36%; filter: blur(10px);
+    background: radial-gradient(circle, rgba(225, 240, 210, .6) 0%, rgba(176, 214, 132, .85) 45%, rgba(176, 214, 132, .4) 68%, rgba(176, 214, 132, 0) 100%); }
+  .orb-cv { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .copy5 { position: relative; z-index: 2; width: var(--D); height: var(--D); max-width: none; text-align: center; border-radius: 50%; }
+  .copy5 .sh { display: block; width: 50%; height: 100%; shape-margin: 3.5%; }
+  .copy5 .sh-l { float: left; shape-outside: polygon(0% 0%, 100.0% 0%, 56.4% 5%, 40.0% 10%, 28.6% 15%, 20.0% 20%, 13.4% 25%, 8.3% 30%, 4.6% 35%, 2.0% 40%, 0.5% 45%, 0.0% 50%, 0.5% 55%, 2.0% 60%, 4.6% 65%, 8.3% 70%, 13.4% 75%, 20.0% 80%, 28.6% 85%, 40.0% 90%, 56.4% 95%, 100.0% 100%, 0% 100%); }
+  .copy5 .sh-r { float: right; shape-outside: polygon(100% 0%, 0.0% 0%, 43.6% 5%, 60.0% 10%, 71.4% 15%, 80.0% 20%, 86.6% 25%, 91.7% 30%, 95.4% 35%, 98.0% 40%, 99.5% 45%, 100.0% 50%, 99.5% 55%, 98.0% 60%, 95.4% 65%, 91.7% 70%, 86.6% 75%, 80.0% 80%, 71.4% 85%, 60.0% 90%, 43.6% 95%, 0.0% 100%, 100% 100%); }
+  .copy5 p { font-size: clamp(16px, 1.9vw, 30px); margin-bottom: 1.4em; }
+  .copy5 p:last-child { margin-bottom: 0; }
+  .copy5 .h5 { margin-top: 9%; margin-bottom: 5%; }
+  @media (max-width: 800px) { .p5 { --S: min(96vw, 100vh); } .copy5 p { font-size: clamp(12px, 3.1vw, 20px); } }
+  .copy5 .light { font-weight: 400; }
 
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #fff; } }
   :root[data-theme="dark"] { --bg: #fff; }
@@ -282,18 +322,33 @@
   <div class="p4">
     <div class="head"><h2 class="h3 h4">the center would also host:</h2></div>
     <div class="board4">
-      <div class="tk" style="--tb:#8fc156;--tf:#4a6f3b;grid-area:1/1">screenings</div>
-      <div class="tk" style="--tb:#b8d466;--tf:#d0427e;grid-area:1/2">exhibitions</div>
-      <div class="tk" style="--tb:#4a6f3b;--tf:#f2f2f2;grid-area:1/3">concerts</div>
-      <div class="tk" style="--tb:#f4cb9f;--tf:#6f58a0;grid-area:2/1">performances</div>
-      <div class="tk" style="--tb:#d0427e;--tf:#f2f2f2;grid-area:2/2">workshops</div>
-      <div class="tk" style="--tb:#6f58a0;--tf:#f4cb9f;grid-area:2/3">talks</div>
-      <div class="tk" style="--tb:#b8d466;--tf:#4a6f3b;grid-area:2/4">festivals</div>
+      <div class="col"><div class="tk" style="--tb:#8fc156;--tf:#4a6f3b">screenings</div><div class="tk" style="--tb:#f4cb9f;--tf:#6f58a0">performances</div></div>
+      <div class="col"><div class="tk" style="--tb:#b8d466;--tf:#d0427e">exhibitions</div><div class="tk" style="--tb:#d0427e;--tf:#f2f2f2">workshops</div></div>
+      <div class="col"><div class="tk" style="--tb:#4a6f3b;--tf:#f2f2f2">concerts</div><div class="tk" style="--tb:#6f58a0;--tf:#f4cb9f">talks</div></div>
+      <div class="col"><div class="gap"></div><div class="tk" style="--tb:#b8d466;--tf:#4a6f3b">festivals</div></div>
       <div class="star3 star3b" tabindex="0" role="button" aria-label="Flower. Click to turn it into a heart."><svg class="fl" viewBox="0 0 200 200" aria-hidden="true"><g stroke="currentColor" stroke-width="44" stroke-linecap="round" fill="none"><path d="M100 100V23M100 100L154 46M100 100H177M100 100L154 154M100 100V177M100 100L46 154M100 100H23M100 100L46 46"/></g></svg><svg class="ht" viewBox="0 0 200 200" aria-hidden="true"><path d="M100 170C42 128 18 98 18 68C18 42 38 26 62 26C80 26 94 36 100 50C106 36 120 26 138 26C162 26 182 42 182 68C182 98 158 128 100 170Z" fill="currentColor" stroke="currentColor" stroke-width="14" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="copy">
       <p class="light">The work created inside the center should not stay inside its walls.</p>
       <p class="bold">It should be seen, heard, performed, exhibited, and shared</p>
+    </div>
+  </div>
+</section>
+
+
+<section class="page" id="p5">
+  <div class="p5">
+    <div class="orb" aria-hidden="true">
+      <div class="orb-mask"><div class="orb-spin"><i class="ring"></i><i class="b1"></i><i class="b2"></i></div></div>
+      <div class="orb-mask haze"><div class="orb-spin"><i class="ring"></i><i class="b1"></i><i class="b2"></i></div></div>
+      <canvas class="orb-cv"></canvas>
+    </div>
+    <div class="copy copy5">
+      <i class="sh sh-l"></i><i class="sh sh-r"></i>
+      <p class="bold h5">BEYOND THE WALLS</p>
+      <p class="light"><span class="bold">CREATED TO CREATE</span><br>is not limited to one building.</p>
+      <p class="light">The goal is to eventually bring workshops, screenings, performances, and educational programs to communities outside Niš — especially to young people with limited access to creative education and resources.</p>
+      <p class="bold">CREATIVITY SHOULD TRAVEL.</p>
     </div>
   </div>
 </section>
@@ -373,17 +428,19 @@
   document.addEventListener('pointerleave', function () { active = false; queue(); });
   window.addEventListener('blur', function () { active = false; queue(); });
   // scroll progress drives the shared background (eased so it glides)
-  var bgEl = document.querySelector('.bg'), pages = document.querySelectorAll('.page'), cur = 0, curQ = 0, curU = 0;
+  var bgEl = document.querySelector('.bg'), pages = document.querySelectorAll('.page'), cur = 0, curQ = 0, curU = 0, curV = 0;
   function prog(el) { return el ? Math.min(1, Math.max(0, 1 - el.getBoundingClientRect().top / window.innerHeight)) : 0; }
   function tick() {
-    var t = prog(pages[1]), tq = prog(pages[2]), tu = prog(pages[3]);
-    cur += (t - cur) * 0.12; curQ += (tq - curQ) * 0.12; curU += (tu - curU) * 0.12;
+    var t = prog(pages[1]), tq = prog(pages[2]), tu = prog(pages[3]), tv = prog(pages[4]);
+    cur += (t - cur) * 0.12; curQ += (tq - curQ) * 0.12; curU += (tu - curU) * 0.12; curV += (tv - curV) * 0.12;
     if (Math.abs(t - cur) < 0.001) cur = t;
     if (Math.abs(tq - curQ) < 0.001) curQ = tq;
     if (Math.abs(tu - curU) < 0.001) curU = tu;
+    if (Math.abs(tv - curV) < 0.001) curV = tv;
     bgEl.style.setProperty('--p', cur.toFixed(4));
     bgEl.style.setProperty('--q', curQ.toFixed(4));
     bgEl.style.setProperty('--u', curU.toFixed(4));
+    bgEl.style.setProperty('--v', curV.toFixed(4));
     requestAnimationFrame(tick);
   }
   tick();
@@ -526,6 +583,172 @@
   }
   initPatch(document.querySelector('.board'), '.tile, .star3');
   initPatch(document.querySelector('.board4'), '.star3');
+  // page 4 tickets: click to grow downward with a short description; tickets below in the same column get pushed down
+  var TK_INFO = {
+    'screenings': 'Film nights and short-film showcases where local and emerging filmmakers share their work with an audience.',
+    'exhibitions': 'Rotating shows of student and community art, from first sketches to finished series, open to everyone.',
+    'concerts': 'Live music from local bands and solo artists: a real stage for new sounds and first gigs.',
+    'performances': 'Theatre, dance, spoken word and experimental pieces, from rehearsals to open stage nights.',
+    'workshops': 'Hands-on sessions led by artists, where you learn a skill and make something to take home.',
+    'talks': 'Open conversations with artists, designers and makers about their process, their path and their questions.',
+    'festivals': 'Days of music, art and performance that carry the work out of the center and into the city.'
+  };
+  var TK_HOME = 5000;   // an open ticket goes back to its starting size after this many ms
+  var GROW = 'height .55s cubic-bezier(.3, 1.1, .4, 1), scale .25s ease, rotate .25s ease, padding .5s ease';
+  function settle(tk) {
+    if (tk.classList.contains('is-open')) { tk.style.height = 'auto'; }
+    else { tk.style.height = ''; tk.style.aspectRatio = ''; }
+    tk.style.transition = '';
+  }
+  function openTk(tk) {
+    var h0 = tk.offsetHeight;
+    tk.style.transition = 'none'; tk.style.aspectRatio = 'auto'; tk.style.height = 'auto';
+    tk.classList.add('is-open', 'measure');
+    var H = Math.max(tk.offsetHeight, Math.round(h0 * 1.5));          // natural open height
+    tk.classList.remove('is-open'); void tk.offsetWidth; tk.classList.remove('measure');
+    tk.style.height = h0 + 'px'; void tk.offsetWidth;
+    tk.style.transition = GROW;
+    tk.classList.add('is-open'); tk.style.height = H + 'px';
+    tk.setAttribute('aria-expanded', 'true');
+    clearTimeout(tk._home); tk._home = setTimeout(function () { if (tk.classList.contains('is-open')) closeTk(tk); }, TK_HOME);
+    clearTimeout(tk._t); tk._t = setTimeout(function () { settle(tk); }, 700);
+  }
+  function closeTk(tk) {
+    var cur = tk.offsetHeight, h0 = Math.round(tk.offsetWidth * 217 / 443);
+    tk.style.transition = 'none'; tk.style.aspectRatio = 'auto'; tk.style.height = cur + 'px'; void tk.offsetWidth;
+    tk.style.transition = GROW;
+    tk.classList.remove('is-open'); tk.style.height = h0 + 'px';
+    clearTimeout(tk._home);
+    tk.setAttribute('aria-expanded', 'false');
+    clearTimeout(tk._t); tk._t = setTimeout(function () { settle(tk); }, 700);
+  }
+  document.querySelectorAll('.tk').forEach(function (tk) {
+    var name = tk.textContent.trim();
+    tk.textContent = '';
+    var tt = document.createElement('span'); tt.className = 'tt'; tt.textContent = name;
+    var td = document.createElement('p'); td.className = 'td'; td.textContent = TK_INFO[name] || '';
+    tk.appendChild(tt); tk.appendChild(td);
+    tk.tabIndex = 0; tk.setAttribute('role', 'button'); tk.setAttribute('aria-expanded', 'false');
+    function toggle() { if (tk.classList.contains('is-open')) closeTk(tk); else openTk(tk); }
+    tk.addEventListener('click', function () { if (tk._moved) { tk._moved = false; return; } toggle(); });
+    tk.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+    tk.addEventListener('transitionend', function (e) { if (e.target === tk && e.propertyName === 'height') { clearTimeout(tk._t); settle(tk); } });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') document.querySelectorAll('.tk.is-open').forEach(closeTk);
+  });
+  // ring page: the blurred circle slowly rotates; only a small area around the cursor dissolves into floating pixel particles
+  (function () {
+    var sec = document.getElementById('p5'); if (!sec) return;
+    var orb = sec.querySelector('.orb'), mask = sec.querySelector('.orb-mask'), spins = sec.querySelectorAll('.orb-spin'), haze = sec.querySelector('.haze'), ringEls = sec.querySelectorAll('.ring'), b1Els = sec.querySelectorAll('.b1'), b2Els = sec.querySelectorAll('.b2'),
+        cv = sec.querySelector('.orb-cv'), ctx = cv.getContext('2d');
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var TAU = Math.PI * 2, SPIN = 55;            // seconds per turn
+    var S = 0, dpr = 1;
+    function size() {
+      var r = orb.getBoundingClientRect(); S = r.width; dpr = Math.min(window.devicePixelRatio || 1, 2);
+      cv.width = Math.round(S * dpr); cv.height = Math.round(S * dpr);
+    }
+    size();
+    if (window.ResizeObserver) new ResizeObserver(size).observe(orb); else window.addEventListener('resize', size);
+
+    function g() { return (Math.random() + Math.random() + Math.random() - 1.5) / 0.5; }   // ~ gaussian
+    function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+    var N = Math.round(clamp(S * S / 110, 1800, 7000));          // lots of pixels
+    var hx = new Float32Array(N), hy = new Float32Array(N), x = new Float32Array(N), y = new Float32Array(N),
+        A = new Float32Array(N), fx = new Float32Array(N), fy = new Float32Array(N), ph = new Float32Array(N), ph2 = new Float32Array(N),
+        sp = new Float32Array(N), ai = new Float32Array(N), grp = new Uint8Array(N), sz = new Float32Array(N);
+    var COL = ['#f1c0d3', '#e596b6', '#dc7aa3', '#a9d17c'], ALPHA = [0.8, 0.7, 0.92, 0.88];
+    for (var i = 0; i < N; i++) {
+      var u = Math.random(), a = Math.random() * TAU, r, gi;
+      if (u < 0.5) {                                           // the ring
+        var tries = 0;
+        while (Math.random() > 0.62 + 0.38 * Math.cos(2 * (a - 0.4)) && tries++ < 8) a = Math.random() * TAU;
+        r = clamp(0.36 + 0.06 * g(), 0.22, 0.49);
+        hx[i] = a; hy[i] = r; gi = Math.random() < 0.65 ? 0 : 1;      // ring: angle + radius
+      } else if (u < 0.76) {                                   // pink blob
+        r = clamp(0.135 * (0.5 + 0.38 * g()), 0, 0.15);
+        hx[i] = Math.cos(a) * r; hy[i] = Math.sin(a) * r; gi = 2;       // blob: offset from its centre
+      } else {                                                 // green blob
+        r = clamp(0.16 * (0.5 + 0.38 * g()), 0, 0.18);
+        hx[i] = Math.cos(a) * r; hy[i] = Math.sin(a) * r; gi = 3;
+      }
+      grp[i] = gi;
+      A[i] = 0.02 + Math.random() * 0.06;                     // how far it drifts while floating (small: it stays around the area)
+      fx[i] = 0.4 + Math.random() * 0.9; fy[i] = 0.4 + Math.random() * 0.9;
+      ph[i] = Math.random() * TAU; ph2[i] = Math.random() * TAU;
+      sp[i] = 0.03 + Math.random() * 0.07;
+      var rs = Math.random(); sz[i] = rs < 0.2 ? 1.6 : (rs < 0.85 ? 2.3 : 3.4);
+    }
+
+    var R_IN = 0.02, R_OUT = 0.14;                           // size of the dissolving area (fractions of the circle box)
+    var mx = 0, my = 0, cx = 0, cy = 0, hover = false, e = 0, vis = false, running = false, idle = true, maskOn = false;
+    sec.addEventListener('pointermove', function (ev) {
+      var r = orb.getBoundingClientRect();
+      mx = (ev.clientX - r.left) / r.width - 0.5; my = (ev.clientY - r.top) / r.height - 0.5;
+      var was = hover; hover = !reduce && Math.hypot(mx, my) < 0.5;
+      if (hover && !was) { cx = mx; cy = my; }
+    });
+    sec.addEventListener('pointerleave', function () { hover = false; });
+    var HIDE = 'linear-gradient(transparent, transparent)';
+    function setMask(node, v) { node.style.webkitMaskImage = v; node.style.maskImage = v; }
+
+    function frame(now) {
+      if (!vis) { running = false; return; }
+      var t = now / 1000, th = reduce ? 0 : t * TAU / SPIN, c = Math.cos(th), s = Math.sin(th);
+      for (var si = 0; si < spins.length; si++) spins[si].style.transform = 'rotate(' + th + 'rad)';
+      // the blobs drift in slow loops and breathe, the ring breathes and its colours slide around it
+      var tm = reduce ? 0 : t;
+      var b1x = -0.155 + 0.035 * Math.cos(tm * 0.21), b1y = -0.039 + 0.03 * Math.sin(tm * 0.17 + 1), b1s = 1 + 0.08 * Math.sin(tm * 0.5);
+      var b2x = -0.003 + 0.04 * Math.cos(tm * 0.16 + 2), b2y = 0.167 + 0.035 * Math.sin(tm * 0.23), b2s = 1 + 0.1 * Math.sin(tm * 0.43 + 1.3);
+      var ringS = 1 + 0.025 * Math.sin(tm * 0.35), ringPhi = -tm * 0.035;
+      var k0 = 'rotate(' + ringPhi.toFixed(4) + 'rad) scale(' + ringS.toFixed(3) + ')';
+      var k1 = 'translate(' + ((b1x + 0.155) * S).toFixed(1) + 'px,' + ((b1y + 0.039) * S).toFixed(1) + 'px) scale(' + b1s.toFixed(3) + ')';
+      var k2 = 'translate(' + ((b2x + 0.003) * S).toFixed(1) + 'px,' + ((b2y - 0.167) * S).toFixed(1) + 'px) scale(' + b2s.toFixed(3) + ')';
+      for (var si2 = 0; si2 < ringEls.length; si2++) { ringEls[si2].style.transform = k0; b1Els[si2].style.transform = k1; b2Els[si2].style.transform = k2; }
+      e += ((hover ? 1 : 0) - e) * 0.1;
+      cx += (mx - cx) * 0.25; cy += (my - cy) * 0.25;
+      var R1 = R_IN * e, R2 = R_OUT * e;
+      // inside the hover area the circle gets much blurrier (haze) and the particles float over it; the edges are feathered
+      if (e > 0.004) {
+        var at = 'circle at ' + ((cx + 0.5) * S).toFixed(1) + 'px ' + ((cy + 0.5) * S).toFixed(1) + 'px, ';
+        setMask(mask, 'radial-gradient(' + at + 'transparent ' + (R1 * S).toFixed(1) + 'px, #000 ' + (R2 * S).toFixed(1) + 'px)');
+        setMask(haze, 'radial-gradient(' + at + '#000 ' + (R1 * S).toFixed(1) + 'px, transparent ' + (R2 * S).toFixed(1) + 'px)');
+        maskOn = true;
+      } else if (maskOn) { setMask(mask, 'none'); setMask(haze, HIDE); maskOn = false; }
+
+      if (e > 0.004 || !idle) {
+        idle = true; ctx.clearRect(0, 0, cv.width, cv.height);
+        var half = S / 2;
+        for (var i = 0; i < N; i++) {
+          var gg = grp[i], bx0, by0;
+          if (gg < 2) { var an = hx[i] + ringPhi, rd = hy[i] * ringS; bx0 = Math.cos(an) * rd; by0 = Math.sin(an) * rd; }
+          else if (gg === 2) { bx0 = b1x + hx[i] * b1s; by0 = b1y + hy[i] * b1s; }
+          else { bx0 = b2x + hx[i] * b2s; by0 = b2y + hy[i] * b2s; }
+          var rx = bx0 * c - by0 * s, ry = bx0 * s + by0 * c;
+          var ddx = rx - cx, ddy = ry - cy, d = Math.sqrt(ddx * ddx + ddy * ddy), m = 1;
+          if (R2 > R1) { var tt = clamp((d - R1) / (R2 - R1), 0, 1); m = tt * tt * (3 - 2 * tt); }
+          ai[i] += ((hover ? 1 - m : 0) - ai[i]) * 0.14;
+          var act = ai[i];
+          if (act < 0.003) { x[i] = rx; y[i] = ry; continue; }   // at rest: sits in the blurred circle
+          idle = false;
+          var tx = rx + Math.sin(t * fx[i] + ph[i]) * A[i] * act, ty = ry + Math.cos(t * fy[i] + ph2[i]) * A[i] * act;
+          var f = 0.1 * (1 - act) + sp[i] * act;
+          x[i] += (tx - x[i]) * f; y[i] += (ty - y[i]) * f;
+          if (act > 0.02) {
+            var q = Math.max(1, Math.round(sz[i] * dpr));
+            ctx.fillStyle = COL[grp[i]]; ctx.globalAlpha = ALPHA[grp[i]] * Math.min(1, act * 1.4);
+            ctx.fillRect(Math.round((x[i] * S + half) * dpr), Math.round((y[i] * S + half) * dpr), q, q);
+          }
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+    new IntersectionObserver(function (es) {
+      vis = es[0].isIntersecting;
+      if (vis && !running) { running = true; requestAnimationFrame(frame); }
+    }).observe(sec);
+  })();
 </script>
 </body>
 </html>
